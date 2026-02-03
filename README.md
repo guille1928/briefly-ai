@@ -54,9 +54,9 @@ El proyecto ha sido construido utilizando una arquitectura 100% Serverless:
 
 Desarrollado por **[TU NOMBRE]**.
 
-* 💼 [LinkedIn](TU_URL_DE_LINKEDIN)
-* 🐙 [GitHub Profile](https://github.com/TU_USUARIO)
-* 📧 [Email](mailto:tu@email.com)
+* 💼 [LinkedIn](www.linkedin.com/in/guillermo-fernández-tardón-329473298)
+* 🐙 [GitHub Profile](https://github.com/guille1928)
+
 
 ---
 *Este proyecto es parte de mi portfolio personal demostrando capacidades en Cloud Computing e Inteligencia Artificial Generativa.*
