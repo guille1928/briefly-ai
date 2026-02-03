@@ -62,6 +62,89 @@
     </div>
   </div>
 
+  <div class="question-overlay hidden-by-default" id="questionOverlay">
+    <div class="question-card">
+      <p class="step-label">Contexto sugerido</p>
+      <h2 id="pregunta-texto">¿Cuáles son los objetivos principales?</h2>
+      <p class="hint">Habla con naturalidad. La IA se encargará de estructurar el acta.</p>
+      <div class="question-actions">
+        <button class="btn primary" type="button" onclick="empezarGrabacionDesdePregunta()">
+          Empezar Grabación
+        </button>
+        <button class="btn secondary" type="button" onclick="cambiarPregunta()">
+          Cambiar Contexto
+        </button>
+      </div>
+      <button class="start-close" type="button" onclick="cerrarPregunta()">Volver</button>
+    </div>
+  </div>
+
+  <div class="record-overlay hidden-by-default" id="recordOverlay">
+    <div class="record-card">
+      <div class="record-anim">
+        <div class="pulse-ring mic">🎤</div>
+        <div class="processing-icon hidden-by-default">⏳</div>
+      </div>
+      <div id="cronometro">00:00</div>
+      <p id="estado-texto">Capturando audio de la reunión...</p>
+      
+      <div class="record-actions-grabando">
+        <button class="btn primary btn-parar" onclick="pararGrabacion()">
+          Detener y procesar
+        </button>
+      </div>
+
+      <div class="record-actions-final hidden-by-default">
+        <button class="btn primary" onclick="grabarOtroRecuerdo()">Nuevo Briefing</button>
+        <button class="btn secondary" onclick="irAListaRecuerdos()">Ver Historial</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="memories-overlay hidden-by-default" id="memoriesOverlay">
+    <div class="memories-card">
+      <h2>Historial de Briefings</h2>
+      <div class="search-container">
+          <input type="text" id="searchInput" placeholder="Buscar briefing..." onkeyup="buscarRecuerdos(this.value)">
+      </div>
+      
+      <div id="memoriesList" class="memories-list"></div>
+      
+      <button class="memories-back-fixed" onclick="cerrarRecuerdos()">← Cerrar</button>
+    </div>
+  </div>
+
+  <div class="memory-detail-overlay hidden-by-default" id="memoryDetailOverlay">
+    <div class="memory-detail-card">
+      <div class="card-header-fixed">
+        <div class="title-row">
+          <h2 id="memoryDetailTitle">Detalle del Briefing</h2>
+        </div>
+        <span id="memoryDetailDate">Fecha de la sesión</span>
+      </div>
+      
+      <div class="card-body-scroll">
+        <div id="memoryDetailText">Analizando puntos clave...</div>
+        
+        <div id="premiumActions" class="hidden-by-default">
+          <button id="btnTranscribe" class="btn-magic" onclick="ejecutarTranscripcionReal()">
+            <span class="magic-title">Generar Acta con IA</span>
+          </button>
+        </div>
+
+        <div class="memory-audio hidden-by-default" id="memoryAudioWrapper">
+          <audio id="memoryAudio" controls></audio>
+        </div>
+      </div>
+
+      <div class="card-footer-fixed">
+        <button class="btn secondary full-width" onclick="cerrarRecuerdo()">Volver al Historial</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="appMessage" class="app-message"></div>
+
   <script src="script.js"></script>
 </body>
 </html>

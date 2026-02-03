@@ -7,13 +7,12 @@ from botocore.config import Config
 from boto3.dynamodb.conditions import Key
 
 # --- CONFIGURACIÓN DINÁMICA ---
-# Se controla desde la pestaña 'Configuration' > 'Environment variables' en AWS
 MODO_DOSSIER = os.environ.get('MODO_DOSSIER', 'true').lower() == 'true'
 
 REGION = "eu-west-3"           # PARÍS
-REGION_BEDROCK = "us-east-1"   # VIRGINIA (Donde suele estar habilitado Claude 3)
-BUCKET_NAME = "briefly-ai-storage" 
-TABLE_NAME = "Briefly_Meetings"
+REGION_BEDROCK = "us-east-1"   # VIRGINIA
+BUCKET_NAME = "briefly-s3" 
+TABLE_NAME = "Briefly_Meeting"
 MODEL_ID_BEDROCK = "anthropic.claude-3-haiku-20240307-v1:0"
 
 # --- CLIENTES AWS ---
@@ -26,22 +25,16 @@ try:
 except Exception as e:
     print(f"Error inicializando clientes: {str(e)}")
 
-# --- FUNCIONES AUXILIARES ---
+# --- FUNCIONES AUXILIARES (SIN CORS REDUNDANTE) ---
 def success(body):
     return {
         "statusCode": 200,
-        "headers": {
-            "Access-Control-Allow-Origin": "*",
-            "Access-Control-Allow-Headers": "Content-Type",
-            "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-        },
         "body": json.dumps(body)
     }
 
 def error(code, msg): 
     return {
         "statusCode": code,
-        "headers": {"Access-Control-Allow-Origin": "*"},
         "body": json.dumps({"error": msg})
     }
 
@@ -59,24 +52,16 @@ def generar_url_audio(usuario, archivo):
 # --- HANDLER PRINCIPAL ---
 def handler(event, context):
     try:
-        # Gestión de CORS para pre-flight
+        # Gestión de OPTIONS simplificada (CORS se maneja en la consola de AWS)
         method = event.get("requestContext", {}).get("http", {}).get("method", "")
         if method == "OPTIONS": 
-            return {
-                "statusCode": 200, 
-                "headers": {
-                    "Access-Control-Allow-Origin": "*",
-                    "Access-Control-Allow-Headers": "Content-Type",
-                    "Access-Control-Allow-Methods": "OPTIONS,POST,GET"
-                },
-                "body": ""
-            }
+            return {"statusCode": 200, "body": ""}
 
         params = event.get("queryStringParameters") or {}
         accion = params.get("accion", "").lower()
         usuario_actual = params.get("usuario", "dev_portfolio")
 
-        # 1. ACCIÓN: SUBIR (Generar URL presignada para S3)
+        # 1. ACCIÓN: SUBIR
         if accion == "subir":
             nombre_archivo = params.get("nombre")
             if not nombre_archivo: return error(400, "Falta nombre")
@@ -97,7 +82,7 @@ def handler(event, context):
             
             table.put_item(Item={
                 'usuario_id': usuario_actual,
-                'id_recuerdo': meeting_id,
+                'id_reunion': meeting_id, # Nombre de Sort Key corregido
                 'fecha_creacion': timestamp_now,
                 'nombre_archivo': nombre_archivo,
                 'estado': 'SOLO_AUDIO',
@@ -105,7 +90,7 @@ def handler(event, context):
             })
             return success({"id_recuerdo": meeting_id, "mensaje": "Registrado"})
 
-        # 3. ACCIÓN: TRANSCRIBIR (AWS Transcribe)
+        # 3. ACCIÓN: TRANSCRIBIR
         elif accion == "transcribir":
             meeting_id = params.get("id")
             nombre_archivo = params.get("nombre")
@@ -121,34 +106,32 @@ def handler(event, context):
             )
             
             table.update_item(
-                Key={'usuario_id': usuario_actual, 'id_recuerdo': meeting_id},
+                Key={'usuario_id': usuario_actual, 'id_reunion': meeting_id},
                 UpdateExpression="set estado=:s",
                 ExpressionAttributeValues={':s': 'PROCESANDO'}
             )
             return success({"job_id": meeting_id, "status": "STARTED"})
 
-        # 4. ACCIÓN: MEJORAR (BEDROCK - PROCESAMIENTO IA)
+        # 4. ACCIÓN: MEJORAR
         elif accion == "mejorar":
             meeting_id = params.get("id")
             
             if MODO_DOSSIER:
-                # Datos de ejemplo para el dossier (Evita costes de Bedrock)
                 demo_titulo = "Briefing: Revisión de Arquitectura"
                 demo_texto = "## Resumen Ejecutivo\nSe analizó la infraestructura serverless.\n\n## Action Items\n| Tarea | Responsable |\n| :--- | :--- |\n| Actualizar S3 | @Fullstack |"
                 
                 table.update_item(
-                    Key={'usuario_id': usuario_actual, 'id_recuerdo': meeting_id},
+                    Key={'usuario_id': usuario_actual, 'id_reunion': meeting_id},
                     UpdateExpression="set texto_mejorado=:m, titulo=:t, estado=:e", 
                     ExpressionAttributeValues={':m': demo_texto, ':t': demo_titulo, ':e': 'COMPLETADO'}
                 )
                 return success({"texto": demo_texto, "titulo": demo_titulo, "nota": "Modo Dossier Activo"})
 
             # Lógica Real con Bedrock
-            item = table.get_item(Key={'usuario_id': usuario_actual, 'id_recuerdo': meeting_id}).get("Item")
+            item = table.get_item(Key={'usuario_id': usuario_actual, 'id_reunion': meeting_id}).get("Item")
             texto_original = item.get('texto_original', '')
 
             if not texto_original:
-                # Intentar leer de S3 si no está en Dynamo
                 obj = s3.get_object(Bucket=BUCKET_NAME, Key=f"usuarios/{usuario_actual}/transcripciones/{meeting_id}.json")
                 data = json.loads(obj["Body"].read().decode("utf-8"))
                 texto_original = data["results"]["transcripts"][0]["transcript"]
@@ -174,7 +157,6 @@ def handler(event, context):
             res_body = json.loads(response.get('body').read())
             raw_text = res_body['content'][0]['text']
             
-            # Parsing del JSON retornado por la IA
             try:
                 start = raw_text.find('{')
                 end = raw_text.rfind('}') + 1
@@ -186,7 +168,7 @@ def handler(event, context):
                 nuevo_texto = raw_text
 
             table.update_item(
-                Key={'usuario_id': usuario_actual, 'id_recuerdo': meeting_id},
+                Key={'usuario_id': usuario_actual, 'id_reunion': meeting_id},
                 UpdateExpression="set texto_mejorado=:m, titulo=:t, estado=:e", 
                 ExpressionAttributeValues={':m': nuevo_texto, ':t': nuevo_titulo, ':e': 'COMPLETADO'}
             )
@@ -198,7 +180,7 @@ def handler(event, context):
             reuniones = []
             for i in resp.get('Items', []):
                 reuniones.append({
-                    "id_real": i['id_recuerdo'],
+                    "id_real": i['id_reunion'], # Corregido
                     "fecha": float(i['fecha_creacion']) * 1000,
                     "titulo": i.get('titulo'),
                     "estado": i.get('estado'),
@@ -207,26 +189,23 @@ def handler(event, context):
                 })
             return success({"recuerdos": reuniones})
 
-        # 6. ACCIÓN: LEER (Polling y Detalle)
+        # 6. ACCIÓN: LEER
         elif accion == "leer":
             job_id = params.get("id")
-            item = table.get_item(Key={'usuario_id': usuario_actual, 'id_recuerdo': job_id}).get("Item")
+            item = table.get_item(Key={'usuario_id': usuario_actual, 'id_reunion': job_id}).get("Item")
             if not item: return error(404, "No encontrado")
             
-            # Lógica de Polling Transcribe
             if item.get("estado") == "PROCESANDO":
                 try:
                     job = transcribe.get_transcription_job(TranscriptionJobName=job_id)
                     if job['TranscriptionJob']['TranscriptionJobStatus'] == 'COMPLETED':
-                        item['estado'] = "TRANSCRITO"
-                        # Aquí podrías extraer el texto y actualizar Dynamo
+                        # El estado se actualizará en la próxima llamada o mediante mejora
+                        pass
                 except: pass
 
             return success({
-                "estado": item.get("estado"),
-                "texto": item.get("texto_mejorado") or item.get("texto_original"),
-                "titulo": item.get("titulo"),
-                "audio_url": generar_url_audio(usuario_actual, item.get("nombre_archivo"))
+                "statusCode": 200,
+                "body": json.dumps(body)
             })
 
         return error(400, "Acción no válida")
