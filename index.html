@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Briefly AI | Voice-to-Action Assistant</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="background"></div>
+  <div class="overlay"></div>
+
+  <main>
+    <section class="welcome">
+      <h1>Briefly <span class="accent">AI</span></h1>
+      <p class="subtitle">Convierte tus reuniones y notas de voz en actas de reunión profesionales con IA.</p>
+      <div class="actions">
+        <button class="btn primary" id="btn-empezar" type="button" onclick="abrirInicio()">
+          🎤 Iniciar Grabación
+        </button>
+        <button class="btn secondary" onclick="abrirRecuerdos()">
+          📂 Historial de Briefings
+        </button>
+      </div>
+    </section>
+
+    <section class="como-funciona" id="como-funciona">
+      <h2>Productividad sin esfuerzo</h2>
+      <div class="pasos">
+        <div class="paso">
+          <div class="icono">🎙️</div>
+          <h3>Graba</h3>
+          <p>Captura el audio de tus reuniones o ideas al vuelo.</p>
+        </div>
+        <div class="paso">
+          <div class="icono">⚡</div>
+          <h3>Procesa</h3>
+          <p>AWS Bedrock (Claude 3) analiza y resume los puntos clave.</p>
+        </div>
+        <div class="paso">
+          <div class="icono">📋</div>
+          <h3>Ejecuta</h3>
+          <p>Obtén Action Items, responsables y fechas de entrega.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div class="start-overlay hidden-by-default" id="startOverlay">
+    <div class="start-card">
+      <h2>Contexto de Grabación</h2>
+      <p class="start-text">Selecciona el tipo de sesión para optimizar el análisis de la IA.</p>
+      <div class="start-actions">
+        <button class="start-btn primary" type="button" onclick="abrirPregunta()">
+            Sesión de Briefing
+        </button>
+        <button class="start-btn secondary" type="button" onclick="iniciarHablarLibre()">
+            Reunión Libre
+        </button>
+      </div>
+      <button class="start-close" type="button" onclick="cerrarInicio()">Cancelar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

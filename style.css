@@ -1,0 +1,332 @@
+/* ========================================================= */
+/* 1. VARIABLES Y FUENTES - PALETA SAAS */
+/* ========================================================= */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+  --primary: #0062ff;         /* Azul Eléctrico SaaS */
+  --primary-dark: #004ecc;
+  --accent: #0f172a;          /* Azul casi negro para títulos */
+  --bg-app: #f8fafc;          /* Fondo gris muy claro */
+  --text-main: #1e293b;
+  --text-sec: #64748b;
+  --white: #ffffff;
+  --border: #e2e8f0;
+  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+}
+
+/* ========================================================= */
+/* 2. RESET Y ESTRUCTURA BASE (Solución Z-Index) */
+/* ========================================================= */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  font-family: 'Inter', sans-serif;
+  background-color: var(--bg-app);
+  color: var(--text-main);
+}
+
+.hidden-by-default {
+  display: none !important;
+}
+
+/* Capas de fondo arregladas */
+.background {
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%);
+  z-index: -2; /* Detrás de todo */
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at top right, rgba(0, 98, 255, 0.05), transparent);
+  z-index: -1; /* Encima del fondo, detrás del contenido */
+}
+
+main {
+  position: relative;
+  z-index: 10; /* Asegura que el contenido esté al frente */
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 40px 20px 120px;
+}
+
+/* ========================================================= */
+/* 3. HERO / WELCOME */
+/* ========================================================= */
+.welcome {
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.welcome h1 {
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 10px;
+  letter-spacing: -1px;
+}
+
+.welcome h1 span.accent {
+  color: var(--primary);
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--text-sec);
+  line-height: 1.6;
+  max-width: 400px;
+  margin-bottom: 40px;
+}
+
+/* ========================================================= */
+/* 4. BOTONES EMPRESARIALES */
+/* ========================================================= */
+.actions {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.btn {
+  padding: 16px 24px;
+  font-size: 1rem;
+  border-radius: 12px;
+  border: none;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn.primary {
+  background: var(--primary);
+  color: white;
+  box-shadow: 0 4px 14px rgba(0, 98, 255, 0.25);
+}
+
+.btn.primary:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+}
+
+.btn.secondary {
+  background: white;
+  border: 1px solid var(--border);
+  color: var(--text-main);
+}
+
+.btn.secondary:hover {
+  background: #f1f5f9;
+}
+
+/* ========================================================= */
+/* 5. SECCIÓN CÓMO FUNCIONA */
+/* ========================================================= */
+.como-funciona {
+  margin-top: 60px;
+}
+
+.pasos {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.paso {
+  background: white;
+  border: 1px solid var(--border);
+  padding: 24px;
+  border-radius: 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 15px;
+  text-align: left;
+}
+
+.paso .icono {
+  font-size: 1.8rem;
+  background: #eff6ff;
+  padding: 10px;
+  border-radius: 12px;
+}
+
+.paso h3 {
+  margin: 0 0 5px 0;
+  font-size: 1.1rem;
+  color: var(--accent);
+}
+
+.paso p {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text-sec);
+  line-height: 1.5;
+}
+
+/* ========================================================= */
+/* 6. OVERLAYS Y MODALES (GENERAL) */
+/* ========================================================= */
+.start-overlay, .memories-overlay, .memory-detail-overlay, .question-overlay, #recordOverlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.8); /* Fondo oscuro profesional */
+  backdrop-filter: blur(8px);
+  display: none;
+  z-index: 1000;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.start-card, .memories-card, .memory-detail-card, .question-card, .record-card {
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+/* ========================================================= */
+/* 7. LISTADO DE REUNIONES (MEMORIES) */
+/* ========================================================= */
+.memories-list {
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 50vh;
+  overflow-y: auto;
+}
+
+.memory-card {
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: 16px;
+  transition: border-color 0.3s;
+}
+
+.memory-card:hover {
+  border-color: var(--primary);
+}
+
+.card-title {
+  font-weight: 700;
+  display: block;
+  color: var(--accent);
+}
+
+.memory-date {
+  font-size: 0.75rem;
+  color: var(--text-sec);
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+/* ========================================================= */
+/* 8. GRABACIÓN Y PROCESANDO */
+/* ========================================================= */
+.pulse-ring {
+  width: 80px;
+  height: 80px;
+  background: rgba(0, 98, 255, 0.1);
+  border: 3px solid var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  margin: 0 auto 20px;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0.4); }
+  70% { box-shadow: 0 0 0 20px rgba(0, 98, 255, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0); }
+}
+
+#cronometro {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--accent);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ========================================================= */
+/* 9. MODO LECTURA (EL ACTA FINAL) */
+/* ========================================================= */
+#readerOverlay {
+  background: #ffffff;
+}
+
+.reader-container {
+  max-width: 650px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+#readerTitle {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--accent);
+  margin-bottom: 20px;
+  line-height: 1.1;
+}
+
+#readerBody {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-main);
+}
+
+/* Quité la letra capitular gigante para que parezca más un reporte de oficina */
+#readerBody::first-letter {
+    font-size: inherit;
+    color: inherit;
+    font-weight: inherit;
+}
+
+/* ========================================================= */
+/* 10. NAVEGACIÓN INFERIOR */
+/* ========================================================= */
+.bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 100;
+}
+
+.bottom-nav span {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-sec);
+  cursor: pointer;
+}
+
+.bottom-nav .active {
+  color: var(--primary);
+}
