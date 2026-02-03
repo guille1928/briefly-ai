@@ -54,7 +54,7 @@ El proyecto ha sido construido utilizando una arquitectura 100% Serverless:
 
 Desarrollado por **[TU NOMBRE]**.
 
-* 💼 [LinkedIn](www.linkedin.com/in/guillermo-fernández-tardón-329473298)
+* 💼 [LinkedIn](https://www.linkedin.com/in/guillermo-fernández-tardón-329473298)
 * 🐙 [GitHub Profile](https://github.com/guille1928)
 
 
