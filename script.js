@@ -231,52 +231,62 @@ async function cargarHistorialReuniones() {
 
     try {
         const response = await fetch(`${LAMBDA_URL}?accion=listar&usuario=${userId}`);
+        console.log("RESPONSE:", response);
+
         if (!response.ok) throw new Error("Error en servidor");
+
         const data = await response.json();
+        console.log("DATA LISTAR:", data);
+
         renderizarListaBriefings(data.recuerdos || []);
     } catch (error) {
+        console.error("Error cargando historial:", error);
         contenedor.innerHTML = `<p style="color:red;">Fallo al cargar: ${error.message}</p>`;
     }
 }
 
+
 function renderizarListaBriefings(lista) {
     const contenedor = document.getElementById("memoriesList");
-    if (!contenedor) {
-        console.error("Error: No se encontró el contenedor #memoriesList en el HTML");
-        return;
-    }
+    if (!contenedor) return;
 
-    // Limpiamos el contenedor (quitamos el mensaje de "Cargando...")
-    contenedor.innerHTML = "";
+    contenedor.innerHTML = ""; 
 
-    if (lista.length === 0) {
-        contenedor.innerHTML = "<p style='text-align:center; padding:20px;'>No hay briefings registrados.</p>";
+    if (!lista || lista.length === 0) {
+        const mensaje = document.createElement("p");
+        mensaje.className = "empty-list-message";
+        mensaje.innerText = "No hay briefings registrados.";
+        contenedor.appendChild(mensaje);
         return;
     }
 
     lista.forEach(item => {
-        // Convertimos el timestamp de milisegundos a fecha legible
-        const fechaObj = new Date(item.fecha);
-        const fechaFormateada = fechaObj.toLocaleDateString("es-ES", {
-            day: '2-digit', month: 'short', year: 'numeric'
-        });
-        
+        console.log("ITEM:", item); // 👈 para ver estructura real
+
         const card = document.createElement("div");
         card.className = "memory-card";
+
+        // Campos tolerantes a distintos nombres
+        const fechaRaw = item.fecha || item.created_at || item.timestamp || Date.now();
+        const fechaFormateada = new Date(fechaRaw).toLocaleDateString();
+
+        const titulo = item.titulo || item.title || "Sesión sin título";
+        const estado = item.estado || item.status || "PENDIENTE";
+        const id = item.id_real || item.id || item.id_recuerdo || item.id_reunion;
+
         card.innerHTML = `
-            <div class="memory-header" style="text-align: left;">
-                <span class="memory-date" style="display:block; font-size:0.75rem; color:var(--text-sec);">${fechaFormateada}</span>
-                <span class="card-title" style="display:block; font-weight:700; color:var(--accent); margin: 5px 0;">${item.titulo || 'Nueva Reunión'}</span>
-                <span class="badge" style="font-size:0.7rem; padding:2px 8px; border-radius:10px; background:#e2e8f0;">${item.estado}</span>
+            <span class="memory-date">${fechaFormateada}</span>
+            <strong class="card-title">${titulo}</strong>
+            <div class="card-status-row">
+                <span class="badge">${estado}</span>
             </div>
-            <div class="memory-actions" style="margin-top:15px; text-align: right;">
-                <button class="btn-action" 
-                        style="background:var(--primary); color:white; border:none; padding:8px 15px; border-radius:8px; cursor:pointer;"
-                        onclick="verDetalleBriefing('${item.id_real}')">
+            <div class="card-actions">
+                <button class="btn-action" onclick="verDetalleBriefing('${id}')">
                     Ver Acta
                 </button>
             </div>
         `;
+
         contenedor.appendChild(card);
     });
 }
