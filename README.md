@@ -48,7 +48,7 @@ El proyecto ha sido construido utilizando una arquitectura 100% Serverless:
 
 ## 📸 Screenshots
 
-*(Aquí puedes subir una captura de pantalla de tu aplicación cuando la tengas lista con el nuevo diseño azul)*
+
 
 ## 👨‍💻 Autor
 
