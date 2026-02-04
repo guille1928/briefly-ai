@@ -26,21 +26,20 @@
    GESTIÓN DE SESIONES BRIEFLY AI
 ================================ */
 
-// Función para abrir el selector de tipo de sesión
 function abrirInicio() {
+    console.log("Intentando abrir inicio...");
     const overlay = document.getElementById("startOverlay");
+    
     if (overlay) {
-        // Aseguramos que el overlay sea visible y esté por encima de todo
-        overlay.style.display = "flex";
+        // Removemos la clase que lo oculta por defecto si existe
+        overlay.classList.remove("hidden-by-default");
         
-        // Evitamos que el body se mueva o haga scroll mientras el modal está abierto
+        // Forzamos el estilo directamente
+        overlay.style.setProperty("display", "flex", "important");
+        
         document.body.style.overflow = "hidden";
-        document.documentElement.style.overflow = "hidden";
-
-        // Resetear la posición del scroll dentro del modal si fuera necesario
-        overlay.scrollTop = 0;
     } else {
-        console.error("Error: No se encontró el elemento con ID 'startOverlay'");
+        console.error("No se encontró #startOverlay");
     }
 }
 
@@ -132,23 +131,23 @@ async function cargarHistorialReuniones() {
     const contenedor = document.getElementById("memoriesList");
     if (!contenedor) return;
 
-    contenedor.innerHTML = "<p style='text-align:center; padding:20px;'>Consultando briefings...</p>";
+    contenedor.innerHTML = "<p>Consultando briefings...</p>";
 
     try {
         const response = await fetch(`${LAMBDA_URL}?accion=listar&usuario=${userId}`);
-        const data = await response.json();
-        const reuniones = data.recuerdos || [];
-
-        if (reuniones.length === 0) {
-            contenedor.innerHTML = "<p style='text-align:center; padding:20px;'>No hay reuniones registradas.</p>";
-            return;
+        
+        // Si el servidor da 502, response.ok será false
+        if (!response.ok) {
+            const errorTexto = await response.text(); // Leemos el error como texto (Internal Server Error)
+            throw new Error(`Servidor respondió con ${response.status}: ${errorTexto}`);
         }
 
-        renderizarListaBriefings(reuniones);
+        const data = await response.json();
+        renderizarListaBriefings(data.recuerdos || []);
         
     } catch (error) {
-        console.error("Error cargando historial:", error);
-        contenedor.innerHTML = "<p style='text-align:center; color:red;'>Error de conexión con el servidor.</p>";
+        console.error("Detalle del fallo:", error);
+        contenedor.innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
     }
 }
 
@@ -264,7 +263,33 @@ function cerrarPregunta() {
     document.getElementById("questionOverlay").style.display = "none";
 }
 
+// Cambiar el contexto de la pregunta
+function cambiarPregunta() {
+    const textoPregunta = document.getElementById("pregunta-texto");
+    const nuevoContexto = preguntas[Math.floor(Math.random() * preguntas.length)];
+    textoPregunta.innerText = nuevoContexto;
+}
 
+// Cerrar el detalle del acta
+function cerrarRecuerdo() {
+    document.getElementById("memoryDetailOverlay").style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+// Iniciar grabación libre (sin pregunta)
+function iniciarHablarLibre() {
+    cerrarInicio();
+    // Aquí llamarías a tu función de mediaRecorder.start()
+    console.log("Iniciando grabación libre...");
+    document.getElementById("recordOverlay").style.display = "flex";
+}
+
+// Empezar desde el modal de pregunta
+function empezarGrabacionDesdePregunta() {
+    cerrarPregunta();
+    document.getElementById("recordOverlay").style.display = "flex";
+    // Aquí llamarías a tu función de mediaRecorder.start()
+}
 
   // En la función pollResultado, cambiamos los estados visuales:
   // Donde decía "Creando historia..." ahora dice "Generando Action Items..."

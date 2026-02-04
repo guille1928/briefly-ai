@@ -174,20 +174,35 @@ def handler(event, context):
             )
             return success({"texto": nuevo_texto, "titulo": nuevo_titulo})
 
-        # 5. ACCIÓN: LISTAR
+     # 5. ACCIÓN: LISTAR
         elif accion == "listar":
-            resp = table.query(KeyConditionExpression=Key('usuario_id').eq(usuario_actual))
-            reuniones = []
-            for i in resp.get('Items', []):
-                reuniones.append({
-                    "id_real": i['id_reunion'], # Corregido
-                    "fecha": float(i['fecha_creacion']) * 1000,
-                    "titulo": i.get('titulo'),
-                    "estado": i.get('estado'),
-                    "preview": i.get('texto_preview', '')[:100],
-                    "nombre_archivo": i.get('nombre_archivo') 
-                })
-            return success({"recuerdos": reuniones})
+            try:
+                print(f"Intentando listar para usuario: {usuario_actual}") # Log para CloudWatch
+                
+                # Usamos scan si query da problemas inicialmente para probar conexión
+                resp = table.query(
+                    KeyConditionExpression=boto3.dynamodb.conditions.Key('usuario_id').eq(usuario_actual)
+                )
+                
+                items = resp.get('Items', [])
+                reuniones = []
+                
+                for i in items:
+                    reuniones.append({
+                        "id_real": str(i.get('id_reunion', 'sin-id')),
+                        "fecha": float(i.get('fecha_creacion', time.time())) * 1000,
+                        "titulo": i.get('titulo', 'Sesión de Briefing'),
+                        "estado": i.get('estado', 'SOLO_AUDIO'),
+                        "nombre_archivo": i.get('nombre_archivo', '') 
+                    })
+                
+                print(f"Éxito: Se encontraron {len(reuniones)} items")
+                return success({"recuerdos": reuniones})
+
+            except Exception as e:
+                # Esto enviará el error real al log de CloudWatch
+                print(f"FALLO CRÍTICO EN LISTAR: {str(e)}")
+                return error(500, f"Error interno: {str(e)}")
 
         # 6. ACCIÓN: LEER
         elif accion == "leer":
