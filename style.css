@@ -225,7 +225,7 @@ background: white;
     display: none; /* lo controla JS */
     padding: 20px;
 
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
 }
@@ -385,4 +385,71 @@ background: white;
 
 .app-message.visible {
   transform: translateX(-50%) translateY(0);
+}
+
+
+/* ========================================================= */
+/* 10. SECCIÓN COMO FUNCIONA */
+/* ========================================================= */
+
+.como-funciona {
+    margin-top: 60px;
+    padding: 40px 20px;
+    background: #ffffff;
+    border-radius: 24px;
+    box-shadow: var(--shadow-md);
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.como-funciona h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 30px;
+}
+
+.pasos {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    gap: 20px;
+}
+
+.paso {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    flex: 1 1 200px;
+    max-width: 220px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    cursor: default;
+}
+
+.paso:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+}
+
+.paso .icono {
+    font-size: 2rem;
+    margin-bottom: 12px;
+}
+
+.paso h3 {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.paso p {
+    font-size: 0.95rem;
+    color: var(--text-sec);
+    line-height: 1.5;
 }
