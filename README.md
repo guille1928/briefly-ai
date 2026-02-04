@@ -52,7 +52,7 @@ El proyecto ha sido construido utilizando una arquitectura 100% Serverless:
 
 ## 👨‍💻 Autor
 
-Desarrollado por **[TU NOMBRE]**.
+Desarrollado por **GuillermoT**.
 
 * 💼 [LinkedIn](https://www.linkedin.com/in/guillermo-fernández-tardón-329473298)
 * 🐙 [GitHub Profile](https://github.com/guille1928)
