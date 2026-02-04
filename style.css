@@ -453,3 +453,25 @@ background: white;
     color: var(--text-sec);
     line-height: 1.5;
 }
+
+
+/*Footer*/
+.app-footer {
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--text-sec);
+  padding: 12px 0;
+  margin-top: 40px;
+  border-top: 1px solid var(--border);
+  background: #f8fafc;
+}
+
+.app-footer a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.app-footer a:hover {
+  text-decoration: underline;
+}
