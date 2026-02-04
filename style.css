@@ -1,45 +1,29 @@
 /* ========================================================= */
-/* 1. VARIABLES Y FUENTES - PALETA SAAS */
+/* 1. CONFIGURACIÓN Y VARIABLES - ESTILO PROFESIONAL */
 /* ========================================================= */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
 
-.hidden-by-default {
-    display: none; /* Sin !important para que el JS pueda cambiarlo */
-}
 :root {
-  --primary: #0062ff;         /* Azul Eléctrico SaaS */
+  --primary: #0062ff;          /* Azul Eléctrico */
   --primary-dark: #004ecc;
-  --accent: #0f172a;          /* Azul casi negro para títulos */
-  --bg-app: #f8fafc;          /* Fondo gris muy claro */
+  --accent: #0f172a;           /* Navy Slate */
+  --bg-app: #f8fafc;           /* Soft Blue-Gray */
   --text-main: #1e293b;
   --text-sec: #64748b;
   --white: #ffffff;
   --border: #e2e8f0;
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
 }
 
-
-/* Fuerza estas propiedades para asegurar visibilidad */
-#startOverlay {
-    position: fixed !important; /* Fijo para que no dependa del scroll */
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.85); /* Fondo oscuro */
-    z-index: 99999; /* El valor más alto posible */
-    display: none; /* JS lo cambiará a flex */
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(5px); /* Toque profesional */
-}
-
-/* ========================================================= */
-/* 2. RESET Y ESTRUCTURA BASE (Solución Z-Index) */
-/* ========================================================= */
 * {
   box-sizing: border-box;
   -webkit-tap-highlight-color: transparent;
+}
+
+/* Control de visibilidad para JS */
+.hidden-by-default {
+  display: none !important;
 }
 
 html, body {
@@ -49,40 +33,39 @@ html, body {
   font-family: 'Inter', sans-serif;
   background-color: var(--bg-app);
   color: var(--text-main);
+  scroll-behavior: smooth;
 }
 
-.hidden-by-default {
-  display: none !important;
-}
-
-/* Capas de fondo arregladas */
+/* ========================================================= */
+/* 2. CAPAS DE FONDO (CANVAS) */
+/* ========================================================= */
 .background {
   position: fixed;
   inset: 0;
   background: linear-gradient(135deg, #f1f5f9 0%, #ffffff 100%);
-  z-index: -2; /* Detrás de todo */
+  z-index: -2;
 }
 
 .overlay {
   position: fixed;
   inset: 0;
   background: radial-gradient(circle at top right, rgba(0, 98, 255, 0.05), transparent);
-  z-index: -1; /* Encima del fondo, detrás del contenido */
+  z-index: -1;
 }
 
 main {
   position: relative;
-  z-index: 10; /* Asegura que el contenido esté al frente */
+  z-index: 10;
   max-width: 600px;
   margin: 0 auto;
   padding: 40px 20px 120px;
 }
 
 /* ========================================================= */
-/* 3. HERO / WELCOME */
+/* 3. HERO Y TIPOGRAFÍA */
 /* ========================================================= */
 .welcome {
-  min-height: 60vh;
+  min-height: 50vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -95,7 +78,7 @@ main {
   font-weight: 800;
   color: var(--accent);
   margin-bottom: 10px;
-  letter-spacing: -1px;
+  letter-spacing: -1.5px;
 }
 
 .welcome h1 span.accent {
@@ -106,12 +89,12 @@ main {
   font-size: 1.1rem;
   color: var(--text-sec);
   line-height: 1.6;
-  max-width: 400px;
+  max-width: 420px;
   margin-bottom: 40px;
 }
 
 /* ========================================================= */
-/* 4. BOTONES EMPRESARIALES */
+/* 4. COMPONENTES DE BOTÓN */
 /* ========================================================= */
 .actions {
   width: 100%;
@@ -127,19 +110,21 @@ main {
   border: none;
   cursor: pointer;
   font-weight: 600;
-  transition: all 0.2s ease;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   text-align: center;
+  display: inline-block;
 }
 
 .btn.primary {
   background: var(--primary);
   color: white;
-  box-shadow: 0 4px 14px rgba(0, 98, 255, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 98, 255, 0.3);
 }
 
 .btn.primary:hover {
   background: var(--primary-dark);
   transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 98, 255, 0.4);
 }
 
 .btn.secondary {
@@ -149,247 +134,189 @@ main {
 }
 
 .btn.secondary:hover {
-  background: #f1f5f9;
+  background: #f8fafc;
+  border-color: var(--text-sec);
 }
 
 /* ========================================================= */
-/* 5. SECCIÓN CÓMO FUNCIONA */
+/* 5. SISTEMA DE MODALES Y OVERLAYS (UNIFICADO) */
 /* ========================================================= */
-.como-funciona {
-  margin-top: 60px;
+.start-overlay, 
+.memories-overlay, 
+.memory-detail-overlay, 
+.question-overlay, 
+#recordOverlay {
+position: fixed !important;
+    inset: 0 !important;
+    background: rgba(15, 23, 42, 0.95) !important; /* Fondo más oscuro para enfoque */
+    z-index: 100000 !important; /* Por encima de todos los demás modales */
+    display: none; 
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(10px);
 }
 
-.pasos {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-}
-
-.paso {
-  background: white;
-  border: 1px solid var(--border);
-  padding: 24px;
-  border-radius: 20px;
-  display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  text-align: left;
-}
-
-.paso .icono {
-  font-size: 1.8rem;
-  background: #eff6ff;
-  padding: 10px;
-  border-radius: 12px;
-}
-
-.paso h3 {
-  margin: 0 0 5px 0;
-  font-size: 1.1rem;
-  color: var(--accent);
-}
-
-.paso p {
-  margin: 0;
-  font-size: 0.95rem;
-  color: var(--text-sec);
-  line-height: 1.5;
-}
-
-/* ========================================================= */
-/* 6. OVERLAYS Y MODALES (GENERAL) */
-/* ========================================================= */
-.start-overlay, .memories-overlay, .memory-detail-overlay, .question-overlay, #recordOverlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(15, 23, 42, 0.8); /* Fondo oscuro profesional */
-  backdrop-filter: blur(8px);
-  display: none;
-  z-index: 1000;
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-}
-
-.start-card, .memories-card, .memory-detail-card, .question-card, .record-card {
-  background: white;
-  border-radius: 24px;
-  padding: 32px;
-  width: 100%;
-  max-width: 400px;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-}
-
-.start-card {
-    background: white;
-    padding: 2rem;
-    border-radius: 1.5rem;
+.start-card, 
+.memories-card, 
+.memory-detail-card, 
+.question-card, 
+.record-card {
+background: white;
+    padding: 40px;
+    border-radius: 24px;
     text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2);
+    width: 90%;
     max-width: 400px;
-    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
 }
 
+/* Especial para botones dentro de modales */
 .start-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-    margin-top: 20px;
-}
-
-.start-btn {
-    padding: 12px 24px;
-    border-radius: 10px;
-    border: none;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-}
-
-.start-btn.primary {
-    background: #0062ff;
-    color: white;
-}
-
-.start-btn.secondary {
-    background: #f1f5f9;
-    color: #1e293b;
-}
-
-.start-close {
-    margin-top: 15px;
-    background: none;
-    border: none;
-    color: #64748b;
-    text-decoration: underline;
-    cursor: pointer;
-}
-
-/* ========================================================= */
-/* 7. LISTADO DE REUNIONES (MEMORIES) */
-/* ========================================================= */
-.memories-list {
-  margin-top: 20px;
   display: flex;
   flex-direction: column;
   gap: 12px;
-  max-height: 50vh;
-  overflow-y: auto;
+  margin-top: 24px;
+}
+
+.start-btn {
+  padding: 14px 24px;
+  border-radius: 12px;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.start-btn.primary { background: var(--primary); color: white; }
+.start-btn.secondary { background: #f1f5f9; color: var(--text-main); }
+
+.start-close {
+  margin-top: 20px;
+  background: none;
+  border: none;
+  color: var(--text-sec);
+  text-decoration: underline;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+/* ========================================================= */
+/* 6. LISTADO DE BRIEFINGS (UI CARDS) */
+/* ========================================================= */
+.memories-list {
+display: flex !important;
+    flex-direction: column !important;
+    gap: 12px !important;
+    margin-top: 20px !important;
+    min-height: 200px; /* Evita que el contenedor colapse a 0px */
+    max-height: 60vh;  /* Limita el alto para activar el scroll */
+    overflow-y: auto !important;
+    padding: 10px !important;
+    visibility: visible !important;
+    opacity: 1 !important;
 }
 
 .memory-card {
-  background: #fff;
-  border: 1px solid var(--border);
-  padding: 16px;
-  border-radius: 16px;
-  transition: border-color 0.3s;
+  background: #ffffff !important;
+    border: 1px solid var(--border) !important;
+    border-radius: 12px !important;
+    padding: 16px !important;
+    display: block !important; /* Asegura que no sea hidden */
+    width: 100% !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05) !important;
+    position: relative !important;
+    z-index: 100001 !important; /* Por encima del fondo del modal */
+    color: var(--text-main) !important;
 }
 
 .memory-card:hover {
   border-color: var(--primary);
+  box-shadow: var(--shadow-md);
+  transform: translateX(4px);
 }
 
 .card-title {
-  font-weight: 700;
-  display: block;
-  color: var(--accent);
+    color: var(--accent) !important;
+    font-weight: 700 !important;
+    display: block !important;
 }
 
 .memory-date {
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--text-sec);
   text-transform: uppercase;
-  font-weight: 600;
+  letter-spacing: 0.5px;
 }
 
 /* ========================================================= */
-/* 8. GRABACIÓN Y PROCESANDO */
+/* 7. ESTADOS DINÁMICOS: GRABACIÓN */
 /* ========================================================= */
 .pulse-ring {
-  width: 80px;
-  height: 80px;
+  width: 90px;
+  height: 90px;
   background: rgba(0, 98, 255, 0.1);
   border: 3px solid var(--primary);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 2rem;
-  margin: 0 auto 20px;
-  animation: pulse 2s infinite;
+  font-size: 2.2rem;
+  margin: 0 auto 24px;
+  animation: pulse-animation 2s infinite;
 }
 
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0.4); }
-  70% { box-shadow: 0 0 0 20px rgba(0, 98, 255, 0); }
+@keyframes pulse-animation {
+  0% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0.5); }
+  70% { box-shadow: 0 0 0 25px rgba(0, 98, 255, 0); }
   100% { box-shadow: 0 0 0 0 rgba(0, 98, 255, 0); }
 }
 
 #cronometro {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--accent);
-  font-variant-numeric: tabular-nums;
-}
-
-/* ========================================================= */
-/* 9. MODO LECTURA (EL ACTA FINAL) */
-/* ========================================================= */
-#readerOverlay {
-  background: #ffffff;
-}
-
-.reader-container {
-  max-width: 650px;
-  margin: 0 auto;
-  padding: 80px 24px;
-}
-
-#readerTitle {
-  font-size: 2.2rem;
+  font-size: 2.5rem;
   font-weight: 800;
   color: var(--accent);
-  margin-bottom: 20px;
-  line-height: 1.1;
+  font-variant-numeric: tabular-nums;
+  margin-bottom: 10px;
 }
 
-#readerBody {
-  font-size: 1.1rem;
+/* ========================================================= */
+/* 8. MODO LECTURA Y RESULTADOS IA */
+/* ========================================================= */
+.card-body-scroll {
+  max-height: 400px;
+  overflow-y: auto;
+  text-align: left;
+  padding: 10px 0;
+}
+
+#memoryDetailText {
   line-height: 1.7;
   color: var(--text-main);
+  font-size: 1rem;
 }
 
-/* Quité la letra capitular gigante para que parezca más un reporte de oficina */
-#readerBody::first-letter {
-    font-size: inherit;
-    color: inherit;
-    font-weight: inherit;
+#memoryDetailText h2, #memoryDetailText h3 {
+  color: var(--accent);
+  margin-top: 1.5rem;
 }
 
 /* ========================================================= */
-/* 10. NAVEGACIÓN INFERIOR */
+/* 9. NAVEGACIÓN Y FEEDBACK */
 /* ========================================================= */
-.bottom-nav {
+.app-message {
   position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(12px);
-  border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 100;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%) translateY(100px);
+  background: var(--accent);
+  color: white;
+  padding: 12px 24px;
+  border-radius: 30px;
+  z-index: 100000;
+  transition: transform 0.3s ease;
+  font-size: 0.9rem;
 }
 
-.bottom-nav span {
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--text-sec);
-  cursor: pointer;
-}
-
-.bottom-nav .active {
-  color: var(--primary);
+.app-message.visible {
+  transform: translateX(-50%) translateY(0);
 }
