@@ -48,11 +48,11 @@ El proyecto ha sido construido utilizando una arquitectura 100% Serverless:
 
 ## 📸 Screenshots
 
-*(Aquí puedes subir una captura de pantalla de tu aplicación cuando la tengas lista con el nuevo diseño azul)*
+
 
 ## 👨‍💻 Autor
 
-Desarrollado por **[TU NOMBRE]**.
+Desarrollado por **GuillermoT**.
 
 * 💼 [LinkedIn](https://www.linkedin.com/in/guillermo-fernández-tardón-329473298)
 * 🐙 [GitHub Profile](https://github.com/guille1928)
