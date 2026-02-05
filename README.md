@@ -59,4 +59,3 @@ Desarrollado por **GuillermoT**.
 
 
 ---
-*Este proyecto es parte de mi portfolio personal demostrando capacidades en Cloud Computing e Inteligencia Artificial Generativa.*
